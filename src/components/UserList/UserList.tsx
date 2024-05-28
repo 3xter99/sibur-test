@@ -9,10 +9,12 @@ import {
     AccordionDetails,
     Typography,
     Avatar,
+    Alert,
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import { debounce } from 'lodash';
+import Loader from "../Loader/Loader";
 
 interface User {
     id: number;
@@ -39,8 +41,12 @@ const UserList: React.FC = () => {
     const [search, setSearch] = useState<string>('');
     const [offset, setOffset] = useState<number>(0);
     const [limit, setLimit] = useState<number>(10);
+    const [loading, setLoading] = useState<boolean>(true);
+    const [error, setError] = useState<string | null>(null);
 
     const fetchUsers = (searchTerm: string, offset: number) => {
+        setLoading(true);
+        setError(null);
         axios.get('https://api.slingacademy.com/v1/sample-data/users', {
             params: {
                 search: searchTerm,
@@ -55,7 +61,13 @@ const UserList: React.FC = () => {
                     setUsers(prevState => [...prevState, ...response.data.users]);
                 }
             })
-            .catch(error => console.error('Error fetching data:', error));
+            .catch(error => {
+                setError('Ошибка при загрузке данных. Пожалуйста, попробуйте еще раз.');
+                console.error('Error fetching data:', error);
+            })
+            .finally(() => {
+                setLoading(false);
+            });
     };
 
     const debouncedFetchUsers = useCallback(
@@ -100,12 +112,16 @@ const UserList: React.FC = () => {
                         onChange={handleSearchChange}
                         sx={{ flexGrow: 1, mr: 2 }}
                     />
-                    <Button sx={{ height: '56px' }}  variant="contained" onClick={handleCollapseAll}>
+                    <Button
+                        sx={{ height: '56px' }}
+                        variant="contained"
+                        onClick={handleCollapseAll}>
                         Свернуть всех
                     </Button>
                 </Box>
             </Box>
             <Box sx={{ p: 2, maxHeight: 'calc(100vh - 72px)', overflow: 'auto' }}>
+                {error && <Alert severity="error">{error}</Alert>}
                 {users.map((user, index) => (
                     <Accordion
                         key={user.id}
@@ -119,14 +135,24 @@ const UserList: React.FC = () => {
                         >
                             <Box sx={{ display: 'flex', alignItems: 'center', width: '100%' }}>
                                 <Box>
-                                    <Typography variant="h6">{index + 1}. {user.first_name} {user.last_name} ({user.job}))</Typography>
-                                    <Typography variant="body2">{user.email}</Typography>
+                                    <Typography
+                                        variant="h6">
+                                        {index + 1}. {user.first_name} {user.last_name} ({user.job})
+                                    </Typography>
+                                    <Typography
+                                        variant="body2">
+                                        {user.email}
+                                    </Typography>
                                 </Box>
                             </Box>
                         </AccordionSummary>
                         <AccordionDetails>
-                            <Box sx={{ display: 'flex', alignItems: 'start', width: '100%' }}>
-                                <Avatar src={user.profile_picture} alt={user.first_name} sx={{ width: 72, height: 72, mr: 2 }} />
+                            <Box
+                                sx={{ display: 'flex', alignItems: 'start', width: '100%' }}>
+                                <Avatar
+                                    src={user.profile_picture}
+                                    alt={user.first_name}
+                                    sx={{ width: 72, height: 72, mr: 2 }} />
                                 <Box>
                                     <Typography variant="body2">ID: {user.id}</Typography>
                                     <Typography variant="body2">Пол: {user.gender}</Typography>
@@ -144,9 +170,15 @@ const UserList: React.FC = () => {
                         </AccordionDetails>
                     </Accordion>
                 ))}
-                <Button variant="contained" onClick={handleLoadMore} sx={{ mt: 2 }}>
-                    Загрузить больше
-                </Button>
+                {loading && <Loader />}
+                {!loading && !error && (
+                    <Button
+                        variant="contained"
+                        onClick={handleLoadMore}
+                        sx={{ mt: 2 }}>
+                        Загрузить больше
+                    </Button>
+                )}
             </Box>
         </>
     );
