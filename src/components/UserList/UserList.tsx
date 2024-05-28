@@ -78,7 +78,7 @@ const UserList: React.FC = () => {
 
     useEffect(() => {
         debouncedFetchUsers(search, offset);
-    }, [search, offset, debouncedFetchUsers]);
+    }, [search, offset]);
 
     const handleExpandClick = (id: number) => {
         setExpanded(prevExpanded => ({
