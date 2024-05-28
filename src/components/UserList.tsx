@@ -38,7 +38,7 @@ const UserList: React.FC = () => {
     const [expanded, setExpanded] = useState<{ [key: number]: boolean }>({});
     const [search, setSearch] = useState<string>('');
     const [offset, setOffset] = useState<number>(0);
-    const [limit] = useState<number>(10);
+    const [limit, setLimit] = useState<number>(10);
 
     const fetchUsers = (searchTerm: string, offset: number) => {
         axios.get('https://api.slingacademy.com/v1/sample-data/users', {
@@ -58,7 +58,6 @@ const UserList: React.FC = () => {
             .catch(error => console.error('Error fetching data:', error));
     };
 
-    // Создаем debounced версию fetchUsers
     const debouncedFetchUsers = useCallback(
         debounce((searchTerm: string, offset: number) => {
             fetchUsers(searchTerm, offset);
@@ -82,7 +81,7 @@ const UserList: React.FC = () => {
 
     const handleSearchChange = (event: ChangeEvent<HTMLInputElement>) => {
         setSearch(event.target.value);
-        setOffset(0); // Сбрасываем смещение при новом поиске
+        setOffset(0);
     };
 
     const handleLoadMore = () => {
