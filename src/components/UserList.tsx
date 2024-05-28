@@ -106,7 +106,7 @@ const UserList: React.FC = () => {
                 </Box>
             </Box>
             <Box sx={{ p: 2, maxHeight: 'calc(100vh - 72px)', overflow: 'auto' }}>
-                {users.map(user => (
+                {users.map((user, index) => (
                     <Accordion
                         key={user.id}
                         expanded={!!expanded[user.id]}
@@ -119,7 +119,7 @@ const UserList: React.FC = () => {
                         >
                             <Box sx={{ display: 'flex', alignItems: 'center', width: '100%' }}>
                                 <Box>
-                                    <Typography variant="h6">{user.first_name} {user.last_name} ({user.job})</Typography>
+                                    <Typography variant="h6">{index + 1}. {user.first_name} {user.last_name} ({user.job}))</Typography>
                                     <Typography variant="body2">{user.email}</Typography>
                                 </Box>
                             </Box>
