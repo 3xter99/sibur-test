@@ -70,15 +70,13 @@ const UserList: React.FC = () => {
             });
     };
 
-    const debouncedFetchUsers = useCallback(
-        debounce((searchTerm: string, offset: number) => {
+    const debouncedFetchUsers = debounce((searchTerm: string, offset: number) => {
             fetchUsers(searchTerm, offset);
-        }, 300), []
-    );
+        }, 300);
 
     useEffect(() => {
         debouncedFetchUsers(search, offset);
-    }, [search, offset, debouncedFetchUsers]);
+    }, [search, offset]);
 
     const handleExpandClick = (id: number) => {
         setExpanded(prevExpanded => ({
