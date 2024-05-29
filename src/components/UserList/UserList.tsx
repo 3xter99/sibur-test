@@ -37,7 +37,7 @@ interface User {
 
 const UserList: React.FC = () => {
     const [users, setUsers] = useState<User[]>([]);
-    const [expanded, setExpanded] = useState<{ [key: number]: boolean }>({});
+    const [expanded, setExpanded] = useState<Record<number, boolean>>({});
     const [search, setSearch] = useState<string>('');
     const [offset, setOffset] = useState<number>(0);
     const [limit, setLimit] = useState<number>(10);
